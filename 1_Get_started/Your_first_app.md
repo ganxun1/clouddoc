@@ -1,7 +1,7 @@
 # 您的第一个应用
 
 
-在《安装》中介绍了如何使用Clouda开发“hello world”，现在我们真正使用Clouda开发一个App---"留言大厅"。
+在《从这里开始》中介绍了如何使用Clouda开发“hello world”，现在我们真正使用Clouda开发一个App---"留言大厅"。
 
 
 ### 首先预览一下"留言大厅"
@@ -185,6 +185,6 @@
 
 在浏览器中输入"localhost:8080/debug.html"运行"留言大厅"。
 
-因为在hall.js中使用了sumeru.router.setDefault()，所以在这里不需要输入"localhost:8080/debug.html#/hall"
+因为在hall.js中使用了sumeru.router.setDefault()，所以在这里不需要输入"localhost:8080/debug.html/hall"
 
 

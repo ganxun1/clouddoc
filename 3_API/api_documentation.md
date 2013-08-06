@@ -120,11 +120,11 @@ Model用来定义App的数据模型。
 		
 		字段值的长度在min-max的范围。
 		
-	* minlength(min)
+	* minlength[min]
 	
 		字段值不小于min
 		
-	* maxlength(min)
+	* maxlength[min]
 	
 		字段值不大于min
 		
@@ -212,15 +212,28 @@ Model用来定义App的数据模型。
 			
 		* regxp
 		
+				“regxp” ：“（）”，
+		
 			使用自定义正则表达式对字段进行验证
 			
 		* func
 		
+				"func":function(value){}
+			
+		
 			使用自定义函数对字段进行验证
+			
+		* asyncFunc
+		
+				"asyncFunc":function(callback,k,v,modelObj){}
+				
+			该验证函数在服务器端运行，先获取指定modelObj的数据，然后根据asyncFunc中的方法进行验证，在callback中给出验证的结果。	
+			
+		**上述的三种方法（regxp/func/asyncFunc）只能使用一种。**	
 			
 		* msg
 		
-			验证后返回的信息
+			当验证出险错误时返回的信息
 
 * #### create(modelName)
 		
@@ -430,6 +443,16 @@ Collection是Model的集合，我们之前曾使用过的subscribe()返回的结
 	将collection的修改保存到Server。
 	
 		session.studentCollection.save();
+		
+* #### ensuresave()
+
+	数据提交后只有服务端验证通过才能在前端展示。
+	
+		session.studentCollection.ensuresave();
+* #### onValidation()
+
+	在insert和update collection时对提交的数据进行验证，在使用ensuresave（）后会自动触发该方法。
+
 		
 * #### pluck(key)
 		

@@ -66,8 +66,31 @@
 	* unique
 	
 		字段值必须唯一
+		
+* ### 如何自定义验证方法
+	
+	如果您需要的验证方法并不在上述方法内，您可以使用下面的方法自定义验证方法：
+			
+	打开sumeru/src/validationRules.js：
+	
+	添加语法如下：
+	
+		fw.validation.addrule("RuleName" , {										"runat":"both",										"regexp":"(^0?[1][358][0-9]{9}$)",										"msg":"$1必须为手机号码格式。"									});
+									
+	参数说明：
+		RuleName：	验证规则名称
+		runat： 规则运行地方选择（服务器端/客户端）
+				both：服务器端和客户端都运行
+				server:服务器端运行
+				client：在客户端运行
+		regexp: 规则的正则表达式
+		msg: 当验证错误时返回的信息
+		$1 : 如果在Model中定义了属性的label则显示label的内容，如果没有，则显示该属性的名称（name）
+				
+	
 	
 	更多内置验证方法和自定义验证方法，请参考附录：《API说明文档》
+	
 
 
 * ### model
