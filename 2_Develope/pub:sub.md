@@ -149,3 +149,33 @@ arg1,arg2...等任意数量的参数会被传入sumeru.publish()对应的functio
  	 	env.subscribe("pub-adultStudentsWithGender","male",function(msgCollection){
 
      	}); 
+     	
+## 通过pubsub订阅三方数据的实例
+
+在app/publish/下新增externalPublishConfig.js文件，用来说明三方数据来源与解析方法：
+
+	/** 	  *	三方数据参数, 包括如何得到url/ 	*/	var externalFetchConfig = {}  //所有外部publish解析方法的容器	externalFetchConfig['pubrandom'] = {	        //params为publish中定义的参数数组,方法名为geturl		geturl : function(params){			//params为publish输入的参数，此例为params = [id];			return 'http://www.shhkparking.com/CarparkInfo.aspx?carparkID=' + params[0];		},		//解析原始数据的方法,方法名为resolve.		resolve : function(originData){	        var nameRegex = /<span id="lbl_name">(.*)&nbsp<\/span>/,			availableRegex = /<span id="lbl_currentSpace">(\d+)&nbsp<\/span>/,			totalRegex = /<span id="lbl_total">(\d+)&nbsp<\/span>/,			fixtureRegex = /<span id="lbl_fixture">(\d+)&nbsp<\/span>/,			rateRegex = /<span id="lbl_price" style="display:inline-block;padding:							5px;">(.*)&nbsp<\/span>/;			var resolved = {				name : originData.match(nameRegex)[1],				available : originData.match(availableRegex)[1] - 0,				total : originData.match(totalRegex)[1] - 0,				fixture : originData.match(fixtureRegex)[1] - 0,				rate : originData.match(rateRegex)[1]			};		},        		fetchInterval : 60 * 1000   //同步间隔,属性名为fetchInterval		}	module.exports = externalFetchConfig
+	
+### 创建对应的Model
+
+
+	Model.todosModel = function(exports){
+	
+		exports.config = {
+			fields: [
+				{name:'name', type:'string'},
+				{name:'available', type:'int'},
+				{name:'total', type:'int'},
+				{name:'fixture', type:'int'},
+				{name:'rate', type:'string'}				
+			]
+		};	
+	};
+### Publish/Subscribe过程
+* Publish
+Collection的三方数据获取调用collection.extfind方法表示此collection为三方数据，处理数据方式不同。
+		fw.publish('student', 'pubrandom', function(callback){        	var collection = this;        	//与普通的collection.find不同，三方数据的publish调用collection.extfind方法表示collection为三方数据			collection.extfind('pubrandom', id, callback);		}
+		
+* Subscribe
+Subscribe方法与普通Subscribe无差别，开发者只用关心所订阅的pubname，而不用区分数据来源。
+		function getExt() {			session.extStudent = env.subscribe('pubrandom', function(collection, info){				session.bind('randomBlock', {					data : collection.getData()				});			});				}
